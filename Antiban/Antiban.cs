@@ -12,10 +12,7 @@ namespace Antiban
         private void PushPriority0(EventMessage eventMessage)
         {
             _eventMessages.Sort((x, y) => x.DateTime.CompareTo(y.DateTime));
-            if (eventMessage.Id == 5)
-            {
-                Debug.WriteLine("7");
-            }
+            
             // Если пусто, просто добавить
             if (_eventMessages.Count == 0)
             {
@@ -99,6 +96,16 @@ namespace Antiban
             // Если таких нет
             if (existingPriority.Count == 0)
             {
+                if (existingLast == null)
+                {
+                    var last = _eventMessages.Last(x => x.DateTime.Date == eventMessage.DateTime.Date && x.DateTime <= eventMessage.DateTime.AddSeconds(10));
+                    if (eventMessage.DateTime.Subtract(last.DateTime).TotalSeconds < 10) 
+                    {
+                        eventMessage.DateTime = last.DateTime.AddSeconds(10);
+                    }
+                    _eventMessages.Add(eventMessage);
+                    return;
+                }
                 // Проверяем есть ли расстояние в 1 минуту
                 var lastDiff = eventMessage.DateTime - existingLast.DateTime;
                 // Добавляем минуту, если такого не наблюдается
@@ -151,32 +158,6 @@ namespace Antiban
                 PushPriority1(eventMessage);
                 return;
             }
-
-
-
-
-
-            /*foreach (var x in _eventMessages)
-            {
-                if (eventMessage.Priority == 1 && _eventMessages.Any(y => x.Phone == eventMessage.Phone && x.Priority == 1 && eventMessage.DateTime.Subtract(x.DateTime).TotalDays < 1))
-                {
-                    eventMessage.DateTime = x.DateTime.AddDays(1);
-                    break;
-                }
-                if (x.Phone == eventMessage.Phone && eventMessage.DateTime.Subtract(x.DateTime).TotalMinutes < 1)
-                {
-                    eventMessage.DateTime = x.DateTime.AddMinutes(1);
-                    break;
-                }
-
-            }
-
-
-            /*if (_eventMessages.Any(x => x.Phone == eventMessage.Phone && x.Priority == 1))
-            {
-                eventMessage.DateTime = eventMessage.DateTime.AddDays(1);
-            }#1#
-            _eventMessages.Add(eventMessage);*/
         }
 
         /// <summary>
