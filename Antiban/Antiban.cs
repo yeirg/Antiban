@@ -12,7 +12,7 @@ namespace Antiban
         private void PushPriority0(EventMessage eventMessage)
         {
             _eventMessages.Sort((x, y) => x.DateTime.CompareTo(y.DateTime));
-            if (eventMessage.Id == 4)
+            if (eventMessage.Id == 5)
             {
                 Debug.WriteLine("7");
             }
@@ -24,10 +24,10 @@ namespace Antiban
             }
 
             // ПОСЛЕДНЕЕ СООБЩЕНИЕ НА СЕГОДНЯ
-            var last = _eventMessages.LastOrDefault(x => x.DateTime.Date == eventMessage.DateTime.Date);
+            var last = _eventMessages.LastOrDefault(x => x.DateTime.Date == eventMessage.DateTime.Date && x.DateTime <= eventMessage.DateTime);
             // ПОСЛЕДНЕЕ СООБЩЕНИЕ НА ЭТОТ НОМЕР
             var lastSamePhone = _eventMessages.LastOrDefault(x =>
-                x.DateTime.Date == eventMessage.DateTime.Date && x.Phone == eventMessage.Phone);
+                x.DateTime.Date == eventMessage.DateTime.Date && x.Phone == eventMessage.Phone && x.DateTime <= eventMessage.DateTime);
             // СМОТРИМ. СООБЩЕНИЕ ЗА СЕГОДНЯ ОТ ЭТОГО НОМЕРА, ЕСТЬ РАССТОЯНИЕ МЕНЬШЕ 1 МИНУТЫ?
             if (lastSamePhone != null && eventMessage.DateTime.Subtract(lastSamePhone.DateTime).TotalMinutes < 1)
             {
