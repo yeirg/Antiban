@@ -24,7 +24,7 @@ namespace Antiban
             }
 
             // ПОСЛЕДНЕЕ СООБЩЕНИЕ НА СЕГОДНЯ
-            var last = _eventMessages.LastOrDefault(x => x.DateTime.Date == eventMessage.DateTime.Date && x.DateTime <= eventMessage.DateTime);
+            var last = _eventMessages.LastOrDefault(x => x.DateTime.Date == eventMessage.DateTime.Date && x.DateTime <= eventMessage.DateTime.AddSeconds(10));
             // ПОСЛЕДНЕЕ СООБЩЕНИЕ НА ЭТОТ НОМЕР
             var lastSamePhone = _eventMessages.LastOrDefault(x =>
                 x.DateTime.Date == eventMessage.DateTime.Date && x.Phone == eventMessage.Phone && x.DateTime <= eventMessage.DateTime);
@@ -93,7 +93,7 @@ namespace Antiban
             
             // Существующие сообщения на тот же номер, вне зависимости от приоритета
             var existing = _eventMessages.Where(x => x.Phone == eventMessage.Phone).ToList();
-            var existingLast = existing.Last();
+            var existingLast = existing.LastOrDefault();
             // Существующие сообщения на тот же номер, с приоритетом
             var existingPriority = existing.Where(x => x.Priority == 1).ToList();
             // Если таких нет
